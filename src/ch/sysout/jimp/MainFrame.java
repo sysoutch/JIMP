@@ -4,11 +4,8 @@ import java.awt.BorderLayout;
 import java.awt.Cursor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.math.BigDecimal;
-import java.math.BigInteger;
 
 import javax.imageio.ImageIO;
 import javax.swing.AbstractButton;
@@ -35,21 +32,24 @@ public class MainFrame extends JFrame implements ActionListener {
 	private static final String TITLE = "JIMP - Java Image Manipulation Program";
 
 	private AbstractButton btnSelect = new JToggleButton("Select");
-	private AbstractButton btnCrop = new JToggleButton("Crop");
 	private AbstractButton btnRotate = new JToggleButton("Rotate");
-
+	private AbstractButton btnCrop = new JToggleButton("Crop");
 	private AbstractButton btnCopy = new JButton("Copy");
 	private AbstractButton btnCut = new JButton("Cut");
 	private AbstractButton btnPaste = new JButton("Paste");
 	private AbstractButton btnDelete = new JButton("Delete");
-
 	private AbstractButton[] navigationButtons = { btnSelect, btnRotate, btnCrop, btnCopy, btnCut, btnPaste, btnDelete };
 
 	private ImageCanvas pnlImageCanvas = new ImageCanvas();
 
 	private JMenu mnuFile;
 	private JMenu mnuEdit;
+	private JMenu mnuSelection;
 	private JMenu mnuView;
+	private JMenu mnuImage;
+	private JMenu mnuColors;
+	private JMenu mnuTools;
+	private JMenu mnuWindow;
 	private JMenu mnuHelp;
 	private JMenuItem itmNew;
 	private JMenuItem itmOpen;
@@ -82,14 +82,19 @@ public class MainFrame extends JFrame implements ActionListener {
 		JMenuBar mnb = new JMenuBar();
 		mnb.add(mnuFile = new JMenu("File"));
 		mnb.add(mnuEdit = new JMenu("Edit"));
+		mnb.add(mnuSelection = new JMenu("Selection"));
 		mnb.add(mnuView = new JMenu("View"));
+		mnb.add(mnuImage = new JMenu("Image"));
+		mnb.add(mnuColors = new JMenu("Colors"));
+		mnb.add(mnuTools = new JMenu("Tools"));
+		mnb.add(mnuWindow = new JMenu("Window"));
 		mnb.add(mnuHelp = new JMenu("Help"));
-		mnuFile.add(itmNew= new JMenuItem("New"));
+		mnuFile.add(itmNew = new JMenuItem("New"));
 		mnuFile.add(itmOpen = new JMenuItem("Open..."));
 		mnuEdit.add(itmUndo = new JMenuItem("Undo"));
 		mnuEdit.add(itmRedo = new JMenuItem("Redo"));
 		mnuHelp.add(itmHelp = new JMenuItem("Help"));
-		
+
 		itmNew.setAccelerator(KeyStroke.getKeyStroke("control N"));
 		itmOpen.setAccelerator(KeyStroke.getKeyStroke("control O"));
 		itmUndo.setAccelerator(KeyStroke.getKeyStroke("control Z"));

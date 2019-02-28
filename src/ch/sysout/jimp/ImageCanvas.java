@@ -25,8 +25,6 @@ import javax.swing.Action;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 
-import ch.sysout.jimp.ImageCanvas.SelectAllAction;
-
 public class ImageCanvas extends JPanel {
 	private static final long serialVersionUID = 1L;
 
@@ -48,7 +46,6 @@ public class ImageCanvas extends JPanel {
 	private List<Rectangle> cuttedRects = new ArrayList<>();
 
 	private BufferedImage cuttedImage;
-
 	private BufferedImage pastedImage;
 
 	protected int pressedX;
@@ -63,21 +60,24 @@ public class ImageCanvas extends JPanel {
 
 
 	public ImageCanvas() {
+		getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("escape"), "unselectSelection");
+		getActionMap().put("unselectAll", new UnselectSelectionAction());
+
 		getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("control A"), "selectAll");
 		getActionMap().put("selectAll", new SelectAllAction());
-		
+
 		getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("control X"), "cutSelection");
 		getActionMap().put("cutSelection", new CutSelectionAction());
-		
+
 		getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("control C"), "copySelection");
 		getActionMap().put("copySelection", new CopySelectionAction());
 
 		getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("DELETE"), "deleteSelection");
 		getActionMap().put("deleteSelection", new DeleteSelectionAction());
-		
+
 		getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("control V"), "pasteSelection");
 		getActionMap().put("pasteSelection", new PasteSelectionAction());
-		
+
 		addMouseListener(new MouseAdapter() {
 
 			@Override
@@ -170,6 +170,13 @@ public class ImageCanvas extends JPanel {
 		});
 	}
 
+	public void unselectSelection() {
+		System.err.println("unselect");
+		dragStartPoint = null;
+		dragEndPoint = null;
+		repaint();
+	}
+
 	public void copySelection() {
 		Rectangle selectedRect = getSelectionRectangle();
 		cuttedImage = image.getSubimage(selectedRect.x, selectedRect.y, selectedRect.width, selectedRect.height);
@@ -216,8 +223,8 @@ public class ImageCanvas extends JPanel {
 					Rectangle r = cuttedRects.get(i);
 					g2d.
 					fillRect(r.x,
-							r.y, 
-							r.width, 
+							r.y,
+							r.width,
 							r.height);
 				}
 			}
@@ -270,7 +277,7 @@ public class ImageCanvas extends JPanel {
 	public boolean hasSelection() {
 		return dragStartPoint != null && dragEndPoint != null;
 	}
-	
+
 	public class SelectAllAction implements Action {
 
 		@Override
@@ -286,10 +293,12 @@ public class ImageCanvas extends JPanel {
 			return null;
 		}
 
+		@Override
 		public boolean isEnabled() {
 			setCurrentTool(SELECT_TOOL);
 			dragStartPoint = new Point(0, 0);
 			dragEndPoint = new Point(image.getWidth(), image.getHeight());
+			currentSelectColor = defaultSelectColor2;
 			repaint();
 			return false;
 		}
@@ -306,7 +315,41 @@ public class ImageCanvas extends JPanel {
 		public void setEnabled(boolean arg0) {
 		}
 	}
-	
+
+	public class UnselectSelectionAction implements Action {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+		}
+
+		@Override
+		public void addPropertyChangeListener(PropertyChangeListener arg0) {
+		}
+
+		@Override
+		public Object getValue(String arg0) {
+			return null;
+		}
+
+		@Override
+		public boolean isEnabled() {
+			unselectSelection();
+			return false;
+		}
+
+		@Override
+		public void putValue(String arg0, Object arg1) {
+		}
+
+		@Override
+		public void removePropertyChangeListener(PropertyChangeListener arg0) {
+		}
+
+		@Override
+		public void setEnabled(boolean arg0) {
+		}
+	}
+
 	public class CutSelectionAction implements Action {
 
 		@Override
@@ -322,6 +365,7 @@ public class ImageCanvas extends JPanel {
 			return null;
 		}
 
+		@Override
 		public boolean isEnabled() {
 			cutSelection();
 			return false;
@@ -339,7 +383,7 @@ public class ImageCanvas extends JPanel {
 		public void setEnabled(boolean arg0) {
 		}
 	}
-	
+
 	public class CopySelectionAction implements Action {
 
 		@Override
@@ -355,6 +399,7 @@ public class ImageCanvas extends JPanel {
 			return null;
 		}
 
+		@Override
 		public boolean isEnabled() {
 			copySelection();
 			return false;
@@ -372,7 +417,7 @@ public class ImageCanvas extends JPanel {
 		public void setEnabled(boolean arg0) {
 		}
 	}
-	
+
 	public class DeleteSelectionAction implements Action {
 
 		@Override
@@ -388,6 +433,7 @@ public class ImageCanvas extends JPanel {
 			return null;
 		}
 
+		@Override
 		public boolean isEnabled() {
 			deleteSelection();
 			return false;
@@ -405,7 +451,7 @@ public class ImageCanvas extends JPanel {
 		public void setEnabled(boolean arg0) {
 		}
 	}
-	
+
 	public class PasteSelectionAction implements Action {
 
 		@Override
@@ -421,6 +467,7 @@ public class ImageCanvas extends JPanel {
 			return null;
 		}
 
+		@Override
 		public boolean isEnabled() {
 			pasteSelection();
 			return false;
