@@ -1,2 +1,2 @@
-# JIMP
-Java Image Manipulation Program
+# PIMP
+Professional Image Manipulation Program
