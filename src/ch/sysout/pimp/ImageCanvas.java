@@ -1,5 +1,6 @@
-package ch.sysout.jimp;
+package ch.sysout.pimp;
 
+import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Cursor;
@@ -36,7 +37,7 @@ public class ImageCanvas extends JPanel {
 	private Point dragEndPoint;
 
 	private float dash1[] = { 10.0f };
-	private BasicStroke dashed = new BasicStroke(1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, dash1, 0.0f);
+	private BasicStroke dashed = new BasicStroke(3.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, dash1, 0.0f);
 
 	private Color defaultSelectColor = Color.LIGHT_GRAY;
 	private Color defaultSelectColor2 = Color.GREEN;
@@ -60,8 +61,8 @@ public class ImageCanvas extends JPanel {
 
 
 	public ImageCanvas() {
-		getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("escape"), "unselectSelection");
-		getActionMap().put("unselectAll", new UnselectSelectionAction());
+		getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("ESCAPE"), "unselectSelection");
+		getActionMap().put("unselectSelection", new UnselectSelectionAction());
 
 		getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("control A"), "selectAll");
 		getActionMap().put("selectAll", new SelectAllAction());
@@ -145,8 +146,29 @@ public class ImageCanvas extends JPanel {
 							dragEndPoint = e.getPoint();
 						}
 					} else {
+						Point point = e.getPoint();
+						int x = point.x;
+						int y = point.y;
+						if (point.x > image.getWidth() && point.y > image.getHeight()) {
+							point = new Point(image.getWidth()-1, image.getHeight()-1);
+						} else {
+							if (point.x > image.getWidth()) {
+								point = new Point(image.getWidth()-1, y);
+							} else if (point.y > image.getHeight()) {
+								point = new Point(x, image.getHeight()-1);
+							}
+						}
+						if (point.x < 0 && point.y < 0) {
+							point = new Point(0, 0);
+						} else {
+							if (point.x < 0) {
+								point = new Point(0, y);
+							} else if (point.y < 0) {
+								point = new Point(x, 0);
+							}
+						}
 						currentSelectColor = defaultSelectColor;
-						dragEndPoint = e.getPoint();
+						dragEndPoint = point;
 					}
 					repaint();
 				}
@@ -234,8 +256,12 @@ public class ImageCanvas extends JPanel {
 			}
 
 			if (hasSelection()) {
+				//				g2d.setColor(Color.BLACK);
+				//				g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_ATOP, 0.6f));
+				//				g2d.fillRect(0, 0, image.getWidth(), image.getHeight());
 				Rectangle rect = getSelectionRectangle();
 				g2d.setColor(currentSelectColor);
+				g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_ATOP, 0.5f));
 				g2d.setStroke(dashed);
 				g2d.drawRect(rect.x, rect.y, rect.width, rect.height);
 			}
@@ -484,5 +510,12 @@ public class ImageCanvas extends JPanel {
 		@Override
 		public void setEnabled(boolean arg0) {
 		}
+	}
+
+	public void cropSelection() {
+		cutSelection();
+		cuttedRects.clear();
+		image = cuttedImage;
+		pasteSelection();
 	}
 }

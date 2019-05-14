@@ -1,7 +1,8 @@
-package ch.sysout.jimp;
+package ch.sysout.pimp;
 
 import java.awt.BorderLayout;
 import java.awt.Cursor;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.FileInputStream;
@@ -24,12 +25,10 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.WindowConstants;
 
-import ch.sysout.ui.WrapLayout;
-
 public class MainFrame extends JFrame implements ActionListener {
 	private static final long serialVersionUID = 1L;
 
-	private static final String TITLE = "JIMP - Java Image Manipulation Program";
+	private static final String TITLE = "PIMP - Professional Image Manipulation Program";
 
 	private AbstractButton btnSelect = new JToggleButton("Select");
 	private AbstractButton btnRotate = new JToggleButton("Rotate");
@@ -102,7 +101,7 @@ public class MainFrame extends JFrame implements ActionListener {
 		itmHelp.setAccelerator(KeyStroke.getKeyStroke("F1"));
 
 		setJMenuBar(mnb);
-		JPanel pnlNavigationBar = new JPanel(new WrapLayout());
+		JPanel pnlNavigationBar = new JPanel(new GridLayout(0, 1));
 		for (AbstractButton btn : navigationButtons) {
 			pnlNavigationBar.add(btn);
 		}
@@ -153,6 +152,8 @@ public class MainFrame extends JFrame implements ActionListener {
 				pnlImageCanvas.pasteSelection();
 			} else if (src == btnDelete) {
 				pnlImageCanvas.deleteSelection();
+			} else if (src == btnCrop) {
+				pnlImageCanvas.cropSelection();
 			} else {
 				pnlImageCanvas.setCursor(null);
 				if (src == btnCrop) {
